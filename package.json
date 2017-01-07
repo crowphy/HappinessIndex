@@ -1,0 +1,33 @@
+{
+  "name": "happiness-index",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crowphy/HappinessIndex.git"
+  },
+  "author": "Crowphy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/crowphy/HappinessIndex/issues"
+  },
+  "homepage": "https://github.com/crowphy/HappinessIndex#readme",
+  "dependencies": {
+    "antd": "^2.6.0",
+    "babel-preset-react": "^6.16.0",
+    "path": "^0.12.7",
+    "react": "^15.4.1",
+    "react-dom": "^15.4.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.21.0",
+    "babel-loader": "^6.2.10",
+    "babel-plugin-import": "^1.1.0",
+    "babel-preset-es2015": "^6.18.0",
+    "webpack": "^2.2.0-rc.3"
+  }
+}

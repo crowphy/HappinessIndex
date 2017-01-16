@@ -3,7 +3,7 @@ var webpack = require('webpack');
 module.exports = function(env) {
     return {
         entry: {
-            main: __dirname + '/src/app.js',
+            main: __dirname + '/src/index.js',
         },
         output: {
             path: __dirname + '/dist',
@@ -22,7 +22,7 @@ module.exports = function(env) {
                 }
             ]
         },
-
+        devtool: 'eval',
         plugins: [
             // new webpack.optimize.CommonsChunkPlugin({
             //     filename: '[name].js',

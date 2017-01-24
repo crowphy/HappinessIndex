@@ -2,6 +2,7 @@ import { combineReducers } from 'redux'
 import { ADD_NODE, DEL_NODE } from './actions'
 
 function nodes(state = [], action) {
+    // console.log(action);
     switch(action.type) {
         case ADD_NODE:
             return [

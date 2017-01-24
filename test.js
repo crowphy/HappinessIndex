@@ -1,4 +1,4 @@
-'use strict';
+/*'use strict';
 
 
 function bar() {console.log(this)}
@@ -14,4 +14,8 @@ console.log(this)
   }, 1000);
 }
 
-var p = new Person();
+var p = new Person();*/
+var a = b => c => {
+  console.log(b, c);
+}
+a(1)(2)

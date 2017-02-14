@@ -62,6 +62,7 @@ class AddNode extends Component {
       }
     }
   }
+  
 
 
   add(id) {
@@ -71,7 +72,6 @@ class AddNode extends Component {
     infoTree[id].children.push(uuid);
     let left = infoTree[id].position.left + 180;
     let top = infoTree[id].position.top + nodeGap * childNum;
-    
     for(let i = 0; i < childNum; i++) {
       let childId = infoTree[id].children[i];
       infoTree[childId].position.top -= nodeGap;
@@ -99,23 +99,51 @@ class AddNode extends Component {
       this.setOthersPos(ancestorIds);
     }
     const { form } = this.props;
-    const keys = form.getFieldValue('keys');
-    const nextKeys = keys.concat(child);
     
     form.setFieldsValue({
-      keys: nextKeys
+      keys: infoTree
     });
     
   };
+
+  deleteChildren(id, nodeToDelete) {
+    for(let i = 0; i < infoTree[id].children.length; i++) {
+      console.log('i', i);
+      nodeToDelete.push(infoTree[id].children[i]);
+      let tempId = infoTree[id].children[i];
+      this.deleteChildren(tempId, nodeToDelete);  
+      delete infoTree[tempId];
+    }
+  }
+
+  remove(id) {
+
+    const { form } = this.props;
+    const keys = form.getFieldValue('keys');
+    let nodeToDelete = [];
+    this.deleteChildren(id, nodeToDelete);
+    nodeToDelete.push(id);
+    let parentId = infoTree[id].parentId;
+    infoTree[parentId].childNum--;
+    let index = infoTree[parentId].children.indexOf(id);
+    infoTree[parentId].children.splice(index, 1);
+
+    delete infoTree[id];
+    form.setFieldsValue({
+      keys: infoTree
+    });
+  }
   
   render() {
 
     const { getFieldDecorator, getFieldValue } = this.props.form;
     getFieldDecorator('keys', { initialValue: [] });
     const keys = getFieldValue('keys');
-    const formItems = keys.map((node) => {
-      return (
-        <FormItem
+    const formItems =[] 
+    for(let i in keys) {
+      let node = infoTree[i];
+      let item = 
+      <FormItem
           key={node.id}
           className='node-item' 
           style={{ top: node.position.top, left: node.position.left }}
@@ -135,9 +163,11 @@ class AddNode extends Component {
             </div>
           )}
         </FormItem>
-      )
-    })
-    
+        if(node.id !== 0) {
+          formItems.push(item);
+        }
+    }
+    console.log(formItems);
     return (
       <Form className='node-add'>
         <FormItem className='node-item' style={{ top: 300, left: 50 }}>
@@ -159,10 +189,5 @@ AddNode.propTypes = {
   onAddClick: PropTypes.func.isRequired
 }
 
-const AddNodeWrapper = Form.create({
-  onFieldsChange(props, fields) {
-    // console.log('onFieldsChange', fields);
-
-  },
-})(AddNode);
+const AddNodeWrapper = Form.create()(AddNode);
 export default AddNodeWrapper;

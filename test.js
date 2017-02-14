@@ -50,3 +50,56 @@ setHeightRange(parentId, highest, lowest) {
     //   }
     // }
   }
+
+  const formItems =[] 
+    for(let node of keys) {
+      let item = 
+      <FormItem
+          key={node.id}
+          className='node-item' 
+          style={{ top: node.position.top, left: node.position.left }}
+        >
+        {getFieldDecorator(`names-${node.id}`, {
+            validateTrigger: ['onChange', 'onBlur'],
+            initialValue: node.id
+          })(
+            <div>
+              <Button type="dashed" onClick={(e) => this.remove(node.id)}>
+                <Icon type="del" />-
+              </Button>
+              <Input placeholder="" style={{ width: '60%', marginRight: 8 }} />
+              <Button type="dashed" onClick={(e) => this.add(node.id)}>
+                <Icon type="plus" key={node.id}/>+
+              </Button>
+            </div>
+          )}
+        </FormItem>
+        formItems.push(item);
+    }
+
+        // keys.forEach(function(item, index) {
+    //   console.log(nodeToDelete, item.id);
+    //   console.log('index', index);
+    //   if(nodeToDelete.indexOf(item.id) > -1) {
+    //     console.log('te');
+    //     keys.splice(index, 1);
+    //   }
+    // })
+    // let len = keys.length;
+    // let flag = 0;
+    // console.log(nodeToDelete);
+    // for(let i = 0; i < len; i++) {
+    //   console.log('len', len);
+    //   console.log('id', keys[i].id);
+    //   if(nodeToDelete.indexOf(keys[i].id) > -1) {
+    //     // keys.splice(i, 1);
+    //     delete keys[i];
+    //     flag++;
+    //   }
+    // }
+    // keys.length -=flag;
+    // console.log('keys', keys);
+
+        // const keys = form.getFieldValue('keys');
+    // const nextKeys = keys.concat(child);
+    

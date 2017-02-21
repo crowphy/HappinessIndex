@@ -26,7 +26,7 @@ module.exports = function(env) {
                 }
             ]
         },
-        devtool: 'eval',
+        devtool: 'eval-source-map',
         plugins: [
             // new webpack.optimize.CommonsChunkPlugin({
             //     filename: '[name].js',

@@ -9,7 +9,7 @@ import './addNode.scss';
 
 const FormItem = Form.Item;
 
-let uuid = 0;
+let uid = 0;
 let infoTree = {
   0: {
     id: 0,
@@ -18,9 +18,12 @@ let infoTree = {
       top: 300,
       left: 50
     },
-    childNum: 0,
+    sonNum: 0,
     children: [],
-    ancestorIds: []
+    ancestorIds: [],
+    childHighest: 300,
+    childLowest: 300,
+    childrenNum: 0
   }
 };
 
@@ -29,21 +32,24 @@ let nodeGap = 15;
 class AddNode extends Component {
 
   // 遍历整棵树的节点并调整位置，自身及直系祖先除外
-  setOthersPos(ancestorIds) {
-
+  setOthersPos(ancestorIds, numToChange) {
+    console.log(ancestorIds);
     if(ancestorIds.length === 1) return;
 
+    let gap = nodeGap * numToChange;
+    // 从根节点开始遍历与同级直系祖先节点比较
     for(let i = 1; i < ancestorIds.length; ) {
-      let childIds = infoTree[ancestorIds[i-1]].children;
+      let childIds = infoTree[ancestorIds[i-1]].children,
+          ancestor = infoTree[ancestorIds[i]];
       for(let j = 0; j < childIds.length; j++) {
-        let sibling = infoTree[childIds[j]],
-            ancestor = infoTree[ancestorIds[i]];
-        if(sibling.position.top < ancestor.position.top) {
-          sibling.position.top -= nodeGap;
-          this.setChildPos(sibling, -nodeGap);
-        } else if(sibling.position.top > ancestor.position.top) {
-          sibling.position.top += nodeGap;
-          this.setChildPos(sibling, nodeGap);
+        let ancestorSibling = infoTree[childIds[j]];
+        // 递归调整所以子节点
+        if(ancestorSibling.position.top < ancestor.position.top) {
+          ancestorSibling.position.top -= gap;
+          this.setChildPos(ancestorSibling, -gap);
+        } else if(ancestorSibling.position.top > ancestor.position.top) {
+          ancestorSibling.position.top += gap;
+          this.setChildPos(ancestorSibling, gap);
         }
       }
       i++;
@@ -51,55 +57,60 @@ class AddNode extends Component {
   }
 
   // 递归调整各个子节点的位置
-  setChildPos(sibling, gap) {
-    let siblingChildren = sibling.children;
-    if(siblingChildren.length === 0) {
-      return;
-    } else {
-      for(let k = 0; k < siblingChildren.length; k++) {
-        infoTree[siblingChildren[k]].position.top += gap;
-        this.setChildPos(infoTree[siblingChildren[k]], gap);
-      }
+  setChildPos(node, gap) {
+
+    // console.log(node);
+    let nodeChildren = node.children;
+    if(nodeChildren.length === 0) return;  
+    for(let k = 0; k < nodeChildren.length; k++) {
+      infoTree[nodeChildren[k]].position.top += gap;
+      this.setChildPos(infoTree[nodeChildren[k]], gap);
     }
   }
-  
+
+  updateChildrenNum(ancestorIds, numToChange) {
+
+    for(let i of ancestorIds) {
+      infoTree[i].childrenNum += numToChange;
+    }
+  }
 
 
   add(id) {
-    uuid++;
+    uid++;
     // 设置子节点的位置
-    let childNum = infoTree[id].childNum++;
-    infoTree[id].children.push(uuid);
+    let sonNum = infoTree[id].sonNum++;
+    let childrenNum = infoTree[id].childrenNum;
+    console.log('childrenNum', childrenNum);
+    this.setChildPos(infoTree[id], -nodeGap);
+    infoTree[id].children.push(uid);
     let left = infoTree[id].position.left + 180;
-    let top = infoTree[id].position.top + nodeGap * childNum;
-    for(let i = 0; i < childNum; i++) {
-      let childId = infoTree[id].children[i];
-      infoTree[childId].position.top -= nodeGap;
-    }
+    let top = infoTree[id].position.top + nodeGap * childrenNum;
+    console.log(infoTree[id].position.top, nodeGap);
     let ancestorIds = infoTree[id].ancestorIds.slice(0);
     ancestorIds.push(id);
     
     let child = {
-      id: uuid,
+      id: uid,
       parentId: id,
       position: {
         top: top,
         left: left
       },
-      childNum: 0,
+      sonNum: 0,
       children: [],
-      ancestorIds: ancestorIds
+      ancestorIds: ancestorIds,
+      childrenNum: 0
     }
 
-    infoTree[uuid] = child;
+    infoTree[uid] = child;
 
+    if(childrenNum !== 0) {
+      this.setOthersPos(ancestorIds, 1);
+    }
+    this.updateChildrenNum(ancestorIds, 1);
     console.log(infoTree);
-
-    if(childNum !== 0) {
-      this.setOthersPos(ancestorIds);
-    }
     const { form } = this.props;
-    
     form.setFieldsValue({
       keys: infoTree
     });
@@ -108,7 +119,6 @@ class AddNode extends Component {
 
   deleteChildren(id, nodeToDelete) {
     for(let i = 0; i < infoTree[id].children.length; i++) {
-      console.log('i', i);
       nodeToDelete.push(infoTree[id].children[i]);
       let tempId = infoTree[id].children[i];
       this.deleteChildren(tempId, nodeToDelete);  
@@ -123,12 +133,22 @@ class AddNode extends Component {
     let nodeToDelete = [];
     this.deleteChildren(id, nodeToDelete);
     nodeToDelete.push(id);
+
+    let ancestorIds = infoTree[id].ancestorIds.slice(0);
+    ancestorIds.push(id);
+    let numToChange = nodeToDelete.length;
+    console.log(numToChange);
+    this.updateChildrenNum(ancestorIds, -numToChange);
+    this.setOthersPos(ancestorIds, -numToChange);
+
     let parentId = infoTree[id].parentId;
-    infoTree[parentId].childNum--;
+    infoTree[parentId].sonNum--;
     let index = infoTree[parentId].children.indexOf(id);
     infoTree[parentId].children.splice(index, 1);
 
     delete infoTree[id];
+
+    console.log(infoTree);
     form.setFieldsValue({
       keys: infoTree
     });
@@ -156,7 +176,7 @@ class AddNode extends Component {
               <Button type="dashed" onClick={(e) => this.remove(node.id)}>
                 <Icon type="del" />-
               </Button>
-              <Input placeholder="" style={{ width: '60%', marginRight: 8 }} />
+              <Input placeholder={node.id} style={{ width: '60%', marginRight: 8 }} />
               <Button type="dashed" onClick={(e) => this.add(node.id)}>
                 <Icon type="plus" key={node.id}/>+
               </Button>
@@ -167,7 +187,6 @@ class AddNode extends Component {
           formItems.push(item);
         }
     }
-    console.log(formItems);
     return (
       <Form className='node-add'>
         <FormItem className='node-item' style={{ top: 300, left: 50 }}>

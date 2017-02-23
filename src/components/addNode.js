@@ -21,9 +21,8 @@ let infoTree = {
     sonNum: 0,
     children: [],
     ancestorIds: [],
-    childHighest: 300,
-    childLowest: 300,
-    childrenNum: 0
+    leafNodeNum: 1,
+    isLeafNode: true
   }
 };
 
@@ -62,34 +61,38 @@ class AddNode extends Component {
     // console.log(node);
     let nodeChildren = node.children;
     if(nodeChildren.length === 0) return;  
-    for(let k = 0; k < nodeChildren.length; k++) {
-      infoTree[nodeChildren[k]].position.top += gap;
-      this.setChildPos(infoTree[nodeChildren[k]], gap);
+    for(let i of nodeChildren) {
+      infoTree[i].position.top += gap;
+      this.setChildPos(infoTree[i], gap);
     }
+    
   }
-
-  updateChildrenNum(ancestorIds, numToChange) {
-
-    for(let i of ancestorIds) {
-      infoTree[i].childrenNum += numToChange;
-    }
-  }
-
 
   add(id) {
     uid++;
     // 设置子节点的位置
     let sonNum = infoTree[id].sonNum++;
-    let childrenNum = infoTree[id].childrenNum;
-    console.log('childrenNum', childrenNum);
     this.setChildPos(infoTree[id], -nodeGap);
     infoTree[id].children.push(uid);
+    
+    let leafNodeNum = infoTree[id].leafNodeNum;
+    if(!sonNum) {
+      leafNodeNum = 0;
+    }
     let left = infoTree[id].position.left + 180;
-    let top = infoTree[id].position.top + nodeGap * childrenNum;
-    console.log(infoTree[id].position.top, nodeGap);
+    let top = infoTree[id].position.top + nodeGap * leafNodeNum;
+
+    infoTree[id].isLeafNode = false;
+
     let ancestorIds = infoTree[id].ancestorIds.slice(0);
     ancestorIds.push(id);
-    
+
+    if(infoTree[id].sonNum > 1) {
+      for(let i of ancestorIds) {
+        infoTree[i].leafNodeNum++;
+      }
+    }
+
     let child = {
       id: uid,
       parentId: id,
@@ -100,15 +103,17 @@ class AddNode extends Component {
       sonNum: 0,
       children: [],
       ancestorIds: ancestorIds,
-      childrenNum: 0
+      leafNodeNum: 1,
+      isLeafNode: true
     }
 
     infoTree[uid] = child;
 
-    if(childrenNum !== 0) {
+    if(sonNum !== 0) {
       this.setOthersPos(ancestorIds, 1);
     }
-    this.updateChildrenNum(ancestorIds, 1);
+    console.log('sonNum', sonNum);
+    // this.updateChildrenNum(ancestorIds, 1);
     console.log(infoTree);
     const { form } = this.props;
     form.setFieldsValue({
@@ -136,15 +141,27 @@ class AddNode extends Component {
 
     let ancestorIds = infoTree[id].ancestorIds.slice(0);
     ancestorIds.push(id);
-    let numToChange = nodeToDelete.length;
-    console.log(numToChange);
-    this.updateChildrenNum(ancestorIds, -numToChange);
+
+    let numToChange = infoTree[id].leafNodeNum;
+    // this.updateChildrenNum(ancestorIds, -numToChange);
     this.setOthersPos(ancestorIds, -numToChange);
 
     let parentId = infoTree[id].parentId;
+    if(infoTree[parentId].sonNum > 1) {
+      for(let i of ancestorIds) {
+        infoTree[i].leafNodeNum -= numToChange;
+      } 
+    } else {
+      for(let i of ancestorIds) {
+        infoTree[i].leafNodeNum -= numToChange + 1;
+      } 
+    }
     infoTree[parentId].sonNum--;
     let index = infoTree[parentId].children.indexOf(id);
     infoTree[parentId].children.splice(index, 1);
+    if(infoTree[parentId].sonNum === 0) {
+      infoTree[parentId].isLeafNode = true;
+    }
 
     delete infoTree[id];
 

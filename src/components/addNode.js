@@ -26,7 +26,7 @@ let infoTree = {
   }
 };
 
-let nodeGap = 15;
+let nodeGap = 42;
 
 class AddNode extends Component {
 
@@ -143,7 +143,6 @@ class AddNode extends Component {
     ancestorIds.push(id);
 
     let numToChange = infoTree[id].leafNodeNum;
-    // this.updateChildrenNum(ancestorIds, -numToChange);
     this.setOthersPos(ancestorIds, -numToChange);
 
     let parentId = infoTree[id].parentId;
@@ -165,7 +164,6 @@ class AddNode extends Component {
 
     delete infoTree[id];
 
-    console.log(infoTree);
     form.setFieldsValue({
       keys: infoTree
     });
@@ -190,11 +188,17 @@ class AddNode extends Component {
             initialValue: node.id
           })(
             <div>
-              <Button type="dashed" onClick={(e) => this.remove(node.id)}>
+              <Button className="node-operate" type="dashed" onClick={(e) => this.remove(node.id)}>
                 <Icon type="del" />-
               </Button>
-              <Input placeholder={node.id} style={{ width: '60%', marginRight: 8 }} />
-              <Button type="dashed" onClick={(e) => this.add(node.id)}>
+              <div className="node-input-area">
+                <Input className="node-input" placeholder={node.id} />
+                <div className="node-number">
+                  <Input className="node-input" placeholder="权重" />
+                  <Input className="node-input" placeholder="分数" />
+                </div>
+              </div>    
+              <Button className="node-operate" type="dashed" onClick={(e) => this.add(node.id)}>
                 <Icon type="plus" key={node.id}/>+
               </Button>
             </div>
@@ -208,8 +212,11 @@ class AddNode extends Component {
       <Form className='node-add'>
         <FormItem className='node-item' style={{ top: 300, left: 50 }}>
           <div>
-            <Input placeholder="" style={{ width: '60%', marginRight: 8 }} />
-            <Button type="dashed" onClick={(e) => this.add(0)}>
+            <div className="node-input-area node-root">
+              <Input className="node-input" placeholder="0"/>
+              <Input className="node-input" placeholder="分数"/>
+            </div>
+            <Button className="node-operate" type="dashed" onClick={(e) => this.add(0)}>
               <Icon type="plus"  key={0}/>+
             </Button>
           </div>
@@ -219,10 +226,6 @@ class AddNode extends Component {
     )
   }
   
-}
-
-AddNode.propTypes = {
-  onAddClick: PropTypes.func.isRequired
 }
 
 const AddNodeWrapper = Form.create()(AddNode);

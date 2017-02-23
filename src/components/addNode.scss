@@ -29,7 +29,7 @@
   top: 4px;
   font-size: 24px;
   color: #999;
-  transition: all .3s;
+  transition: all 0.3s;
 }
 .dynamic-delete-button:hover {
   color: #777;
@@ -37,4 +37,34 @@
 .dynamic-delete-button[disabled] {
   cursor: not-allowed;
   opacity: 0.5;
+}
+.node-operate {
+    visibility: hidden;
+}
+.node-item:hover {
+    .node-operate {
+        visibility: visible;
+    }
+}
+.node-item div {
+    display: flex;
+    justify-content: center;
+}
+.node-input-area {
+    display: flex;
+    flex-direction: column;
+}
+.node-input-area div {
+    display: inline;
+}
+.node-input {
+    width: 100px;
+    text-align: center;
+}
+.node-number .node-input {
+    width: 50px;
+}
+
+div.node-root {
+    // display: 
 }

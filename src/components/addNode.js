@@ -7,7 +7,7 @@ var Button = require('antd/lib/button');
 import React, { Component, PropTypes } from 'react';
 import './addNode.scss';
 import infoTree from './infoTree';
-import Calculate from './calculate';
+// import Calculate from './calculate';
 
 
 const FormItem = Form.Item;

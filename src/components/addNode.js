@@ -214,7 +214,7 @@ class AddNode extends Component {
                   <Input className="node-input" placeholder="名称" />
                   <div className="node-number">
                     <Input className="node-input" placeholder="权重" onChange={(e) => this.setDefaultWeight(node.id)} />
-                    <Input className="node-input" placeholder="分数" onChange={Calculate.calculateValue(node.id)} />
+                    <Input className="node-input" placeholder="分数" />
                   </div>
                 </div>
                 <Button className="node-operate" type="dashed" onClick={(e) => this.add(node.id)}>

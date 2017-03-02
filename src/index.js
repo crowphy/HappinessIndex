@@ -1,16 +1,10 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { createStore } from 'redux'
-import { Provider } from 'react-redux'
-import App from './containers/App'
-import addNode from './reducers'
-
-let store = createStore(addNode)
+import AddNodeWrapper from './components/AddNode'
 
 let rootElement = document.getElementById('root')
+
 render(
-    <Provider store={store}>
-        <App />
-    </Provider>,
+    <AddNodeWrapper />,
     rootElement
 )

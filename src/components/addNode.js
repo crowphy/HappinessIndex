@@ -1,28 +1,24 @@
-// import React from 'react';
-// import { Form, Input, Icon, Button } from 'antd/lib';
-var Form = require('antd/lib/form');
-var Input = require('antd/lib/input');
-var Icon = require('antd/lib/icon');
-var Button = require('antd/lib/button');
+
+let Form = require('antd/lib/form');
+let Input = require('antd/lib/input');
+let Icon = require('antd/lib/icon');
+let Button = require('antd/lib/button');
 import React, { Component, PropTypes } from 'react';
 import './addNode.scss';
 import infoTree from './infoTree';
 // import Calculate from './calculate';
 
-
 const FormItem = Form.Item;
 
 let uid = 0;
-
 let nodeGap = 25;
 
 class AddNode extends Component {
 
   // 遍历整棵树的节点并调整位置，自身及直系祖先除外
   setOthersPos(ancestorIds, numToChange) {
-    console.log(ancestorIds);
-    if (ancestorIds.length === 1) return;
 
+    if (ancestorIds.length === 1) return;
     let gap = nodeGap * numToChange;
     // 从根节点开始遍历与同级直系祖先节点比较
     for (let i = 1; i < ancestorIds.length;) {
@@ -54,7 +50,6 @@ class AddNode extends Component {
       infoTree[i].lineY = node.position.top - infoTree[i].position.top;
       this.setChildPos(infoTree[i], gap);
     }
-
   }
 
   add(id) {
@@ -68,9 +63,9 @@ class AddNode extends Component {
     if (!sonNum) {
       leafNodeNum = 0;
     }
+
     let left = infoTree[id].position.left + 180;
     let top = infoTree[id].position.top + nodeGap * leafNodeNum;
-
     infoTree[id].isLeafNode = false;
 
     let ancestorIds = infoTree[id].ancestorIds.slice(0);
@@ -96,7 +91,7 @@ class AddNode extends Component {
       ancestorIds: ancestorIds,
       leafNodeNum: 1,
       isLeafNode: true,
-      weight: 0,
+      weight: '',
       defaultWeight: 0,
       value: 0,
       lineY: lineY
@@ -104,21 +99,14 @@ class AddNode extends Component {
 
     infoTree[uid] = child;
 
-
-    this.setDefaultWeight(id);
-
     if (sonNum !== 0) {
       this.setOthersPos(ancestorIds, 1);
     }
 
-    // this.setLineY(infoTree[id]);
-
-    console.log(infoTree);
     const { form } = this.props;
     form.setFieldsValue({
       keys: infoTree
     });
-
   };
 
   deleteChildren(id, nodeToDelete) {
@@ -168,20 +156,26 @@ class AddNode extends Component {
     });
   }
 
-  setDefaultWeight(id) {
-    console.log();
-    let sonIds = infoTree[id].sonIds;
-    let remainWeight = 1;
-    let idsLength = sonIds.length;
-    for (let sonId of sonIds) {
-      if (infoTree[sonId].weight) {
-        remainWeight -= infoTree[sonId].weight;
-        idsLength--;
-      } else {
-        console.log(remainWeight);
-        infoTree[sonId].defaultWeight = (remainWeight / idsLength).toFixed(3);
+  calculateWeight(id, e) {
+
+    const { form } = this.props;
+
+    
+    let preRemainWeight = 100 - infoTree[id].weight;
+    infoTree[id].weight = e.target.value || 0;
+    let remainWeight = 100 - infoTree[id].weight;
+    console.log(preRemainWeight, remainWeight);
+    let parentId = infoTree[id].parentId;
+    for(let sonId of infoTree[parentId].sonIds) {
+      if(sonId !== id) {
+        infoTree[sonId].weight = (infoTree[sonId].weight / preRemainWeight * remainWeight).toFixed(2);
       }
     }
+
+    form.setFieldsValue({
+      keys: infoTree
+    });
+
   }
 
   render() {
@@ -213,7 +207,7 @@ class AddNode extends Component {
                 <div className="node-input-area">
                   <Input className="node-input" placeholder="名称" />
                   <div className="node-number">
-                    <Input className="node-input" placeholder="权重" onChange={(e) => this.setDefaultWeight(node.id)} />
+                    <Input className="node-input" placeholder="权重" maxLength="4" min="0" max="100" value={node.weight} onChange={(e) => this.calculateWeight(node.id, e)} />
                     <Input className="node-input" placeholder="分数" />
                   </div>
                 </div>
@@ -244,11 +238,8 @@ class AddNode extends Component {
         </FormItem>
         {formItems}
       </Form>
-      
-      
     )
   }
-
 }
 
 const AddNodeWrapper = Form.create({
@@ -256,7 +247,7 @@ const AddNodeWrapper = Form.create({
     console.log(props, values);
   },
   onFieldsChange(props, values) {
-    console.log(props, values);
+    console.log(values);
   }
 })(AddNode);
 export default AddNodeWrapper;

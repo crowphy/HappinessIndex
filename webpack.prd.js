@@ -1,5 +1,4 @@
 var webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = function(env) {
     return {
@@ -27,7 +26,7 @@ module.exports = function(env) {
                 }
             ]
         },
-        devtool: 'eval-source-map',
+        devtool: false,
         plugins: [
             // new webpack.optimize.CommonsChunkPlugin({
             //     filename: '[name].js',
@@ -42,7 +41,12 @@ module.exports = function(env) {
                 manifest: require('./manifest.json'),
                 context: __dirname,
             }),
-            new ExtractTextPlugin('[name].[contenthash].css')
+            new webpack.optimize.UglifyJsPlugin({
+                comments: false,        //去掉注释
+                compress: {
+                    warnings: false    //忽略警告,要不然会有一大堆的黄色字体出现……
+                }
+            }),
         ],
         devServer: {
             contentBase: __dirname + '/dist',

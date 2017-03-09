@@ -3,19 +3,33 @@ let Form = require('antd/lib/form');
 let Input = require('antd/lib/input');
 let Icon = require('antd/lib/icon');
 let Button = require('antd/lib/button');
+// import { Form, Input, Icon, Button } from 'antd';
 import React, { Component, PropTypes } from 'react';
 import './addNode.scss';
 import infoTree from './infoTree';
 // import Calculate from './calculate';
 
 const FormItem = Form.Item;
-
 let uid = 0;
 let nodeGap = 25;
 
+/**
+ * 
+ * 
+ * @class AddNode
+ * @extends {Component}
+ */
 class AddNode extends Component {
 
-  // 遍历整棵树的节点并调整位置，自身及直系祖先除外
+  /**
+   * 设置其他节点的位置，遍历整棵树的节点，自身及直系祖先除外
+   * 
+   * @param {any} ancestorIds 直系祖先节点
+   * @param {any} numToChange 影响高度的节点数量
+   * @returns 
+   * 
+   * @memberOf AddNode
+   */
   setOthersPos(ancestorIds, numToChange) {
 
     if (ancestorIds.length === 1) return;
@@ -40,7 +54,15 @@ class AddNode extends Component {
     }
   }
 
-  // 递归调整各个子节点的位置
+  /**
+   * 递归调整各个子节点的位置
+   * 
+   * @param {any} node 
+   * @param {any} gap 
+   * @returns 
+   * 
+   * @memberOf AddNode
+   */
   setChildPos(node, gap) {
 
     let sonNodes = node.sonIds;
@@ -52,6 +74,14 @@ class AddNode extends Component {
     }
   }
 
+
+  /**
+   * 添加节点
+   * 
+   * @param {any} id 
+   * 
+   * @memberOf AddNode
+   */
   add(id) {
     uid++;
     // 设置子节点的位置
@@ -76,7 +106,7 @@ class AddNode extends Component {
         infoTree[i].leafNodeNum++;
       }
     }
-
+    // 待绘制两点之间的落差
     let lineY = infoTree[id].position.top - top;
 
     let child = {
@@ -118,6 +148,13 @@ class AddNode extends Component {
     }
   }
 
+  /**
+   * 删除节点
+   * 
+   * @param {any} id 
+   * 
+   * @memberOf AddNode
+   */
   remove(id) {
 
     const { form } = this.props;
@@ -156,11 +193,18 @@ class AddNode extends Component {
     });
   }
 
+  /**
+   *  计算节点权重，使兄弟节点的权重和为1
+   * 
+   * @param {any} id 
+   * @param {any} e 
+   * 
+   * @memberOf AddNode
+   */
   calculateWeight(id, e) {
 
     const { form } = this.props;
 
-    
     let preRemainWeight = 100 - infoTree[id].weight;
     infoTree[id].weight = e.target.value || 0;
     let remainWeight = 100 - infoTree[id].weight;
@@ -242,12 +286,5 @@ class AddNode extends Component {
   }
 }
 
-const AddNodeWrapper = Form.create({
-  onValuesChange(props, values) {
-    console.log(props, values);
-  },
-  onFieldsChange(props, values) {
-    console.log(values);
-  }
-})(AddNode);
+const AddNodeWrapper = Form.create()(AddNode);
 export default AddNodeWrapper;

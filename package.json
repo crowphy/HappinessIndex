@@ -4,7 +4,10 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "dev": "webpack --config webpack.config.js",
+    "build": "webpack --config webpack.config.prd.js",
+    "build-lib": "webpack --config webpack.config.lib.js"
   },
   "repository": {
     "type": "git",
@@ -17,7 +20,7 @@
   },
   "homepage": "https://github.com/crowphy/HappinessIndex#readme",
   "dependencies": {
-    "antd": "^2.6.0",
+    "antd": "^2.7.4",
     "babel-preset-react": "^6.16.0",
     "path": "^0.12.7",
     "react": "^15.4.1",
@@ -33,6 +36,7 @@
     "extract-text-webpack-plugin": "^2.0.0",
     "jslint": "^0.10.3",
     "node-sass": "^4.3.0",
+    "progress-bar-webpack-plugin": "^1.9.3",
     "redux-devtools": "^3.3.2",
     "redux-devtools-dock-monitor": "^1.1.1",
     "redux-devtools-log-monitor": "^1.2.0",

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "test",
     "dev": "webpack --config webpack.config.js",
-    "build": "webpack --config webpack.config.prd.js",
+    "build": "webpack --config webpack.config.lib.js --env=production && webpack --config webpack.config.prd.js --env=production",
     "build-lib": "webpack --config webpack.config.lib.js"
   },
   "repository": {

@@ -71,10 +71,13 @@ div.node-root {
 svg {
     position: absolute;
     z-index: -1;
-    left: -58px;
-    top: -500px;
+    left: -46px;
+    // top: -500px;
 }
 line {
-    stroke: #000;
+    stroke: #d9d9d9;
     stroke-width: 1;
+}
+.ant-btn {
+    padding: 4px 10px;
 }

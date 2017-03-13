@@ -1,9 +1,4 @@
-
-let Form = require('antd/lib/form');
-let Input = require('antd/lib/input');
-let Icon = require('antd/lib/icon');
-let Button = require('antd/lib/button');
-// import { Form, Input, Icon, Button } from 'antd';
+import { Form, Input, Icon, Button, Message } from 'antd';
 import React, { Component, PropTypes } from 'react';
 import './addNode.scss';
 import infoTree from './infoTree';
@@ -11,7 +6,7 @@ import infoTree from './infoTree';
 
 const FormItem = Form.Item;
 let uid = 0;
-let nodeGap = 25;
+let nodeGap = 30;
 
 /**
  * 
@@ -205,21 +200,70 @@ class AddNode extends Component {
 
     const { form } = this.props;
 
-    let preRemainWeight = 100 - infoTree[id].weight;
+    // let preRemainWeight = 100 - infoTree[id].weight;
     infoTree[id].weight = e.target.value || 0;
-    let remainWeight = 100 - infoTree[id].weight;
-    console.log(preRemainWeight, remainWeight);
-    let parentId = infoTree[id].parentId;
-    for(let sonId of infoTree[parentId].sonIds) {
-      if(sonId !== id) {
-        infoTree[sonId].weight = (infoTree[sonId].weight / preRemainWeight * remainWeight).toFixed(2);
-      }
-    }
-
+    // let remainWeight = 100 - infoTree[id].weight;
+    // console.log(preRemainWeight, remainWeight);
+    // let parentId = infoTree[id].parentId;
+    // for(let sonId of infoTree[parentId].sonIds) {
+    //   if(sonId !== id) {
+    //     infoTree[sonId].weight = (infoTree[sonId].weight / preRemainWeight * remainWeight).toFixed(2);
+    //   }
+    // }
     form.setFieldsValue({
       keys: infoTree
     });
 
+  }
+
+
+  /**
+   * 校验兄弟节点的权重和是否为1
+   * 
+   * @param {any} id 
+   * 
+   * @memberOf AddNode
+   */
+  checkWeightSum(id) {
+    
+    let parentId = infoTree[id].parentId;
+    let sum = 0;
+    for(let sonId of infoTree[parentId].sonIds) {
+      console.log(sonId, infoTree[sonId].weight);
+      if(infoTree[sonId].weight) {
+        sum += Number(infoTree[sonId].weight);
+      }
+    }
+    if(sum !== 1) {
+      console.log(Message);
+      Message.warn('权重和不为1');
+    }
+    console.log(sum);
+  }
+
+  /**
+   * 计算节点的值，各节点的值由叶节点计算得到
+   * 
+   * 
+   * @memberOf AddNode
+   */
+  calculateValue(id, e) {
+
+    let ancestorIds = infoTree[id].ancestorIds;
+    infoTree[id].value = e.target.value || 0;
+    
+    for(let i = ancestorIds.length - 1; i >= 0; i--) {
+      infoTree[ancestorIds[i]].value = 0;
+      for(let id of infoTree[ancestorIds[i]].sonIds) {
+        infoTree[ancestorIds[i]].value += infoTree[id].value * infoTree[id].weight;
+      }
+      infoTree[ancestorIds[i]].value.toFixed(2);
+    }
+    const { form } = this.props;
+    form.setFieldsValue({
+      keys: infoTree
+    });
+    console.log(infoTree);
   }
 
   render() {
@@ -237,26 +281,26 @@ class AddNode extends Component {
           style={{ top: node.position.top, left: node.position.left }}
         >
           {getFieldDecorator(`names-${node.id}`, {
-            validateTrigger: ['onChange', 'onBlur'],
+            validateTrigger: ['onChange', 'onBlur', 'onPressEnter'],
             initialValue: node.id
           })(
             <div>
-              <svg id="mysvg" width="80" height="1000">
-                <line id="line" x1="0" y1={node.lineY + 521} x2="80" y2="521"/>
+              <svg id="mysvg" width="80" data-test={node.lineY} height={2*Math.abs(node.lineY)+30} style={{top: (node.lineY)/2 + "px"}} >
+                <line id="line" x1="0" y1={node.lineY+30} x2="80" y2={-node.lineY} />
               </svg>
               <div>
                 <Button className="node-operate" type="dashed" onClick={(e) => this.remove(node.id)}>
-                  <Icon type="del" />-
+                  <Icon type="minus" />
                 </Button>
                 <div className="node-input-area">
                   <Input className="node-input" placeholder="名称" />
                   <div className="node-number">
-                    <Input className="node-input" placeholder="权重" maxLength="4" min="0" max="100" value={node.weight} onChange={(e) => this.calculateWeight(node.id, e)} />
-                    <Input className="node-input" placeholder="分数" />
+                    <Input className="node-input" placeholder="权重" maxLength="4" min="0" max="1" onChange={(e) => this.calculateWeight(node.id, e)} onBlur={(e) => this.checkWeightSum(node.id, e)}/>
+                    <Input className="node-input" placeholder="分数" value={node.value} maxLength="4" min="0" max="100"  readOnly={!node.isLeafNode} onChange={(e) => this.calculateValue(node.id, e)}/>
                   </div>
                 </div>
                 <Button className="node-operate" type="dashed" onClick={(e) => this.add(node.id)}>
-                  <Icon type="plus" key={node.id} />+
+                  <Icon type="plus" key={node.id} />
                 </Button>
               </div>
             </div>
@@ -269,14 +313,14 @@ class AddNode extends Component {
     return (
       <Form className='node-add'>
         
-        <FormItem className='node-item' style={{ top: 300, left: 72 }}>
+        <FormItem className='node-item' style={{ top: 300, left: 84 }}>
           <div>
             <div className="node-input-area node-root">
               <Input className="node-input" placeholder="名称" />
-              <Input className="node-input" placeholder="得分" />
+              <Input className="node-input" placeholder={infoTree[0].value} readOnly />
             </div>
             <Button className="node-operate" type="dashed" onClick={(e) => this.add(0)}>
-              <Icon type="plus" key={0} />+
+              <Icon type="plus" key={0} />
             </Button>
           </div>
         </FormItem>

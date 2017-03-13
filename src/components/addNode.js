@@ -285,8 +285,8 @@ class AddNode extends Component {
             initialValue: node.id
           })(
             <div>
-              <svg id="mysvg" width="80" data-test={node.lineY} height={2*Math.abs(node.lineY)+30} style={{top: (node.lineY)/2 + "px"}} >
-                <line id="line" x1="0" y1={node.lineY+30} x2="80" y2={-node.lineY} />
+              <svg id="mysvg" width="80" data-test={node.lineY} height="1000">
+                <line id="line" x1="0" y1={node.lineY + 528} x2="80" y2="528" />
               </svg>
               <div>
                 <Button className="node-operate" type="dashed" onClick={(e) => this.remove(node.id)}>

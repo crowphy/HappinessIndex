@@ -1,6 +1,9 @@
 #root, form {
     
 }
+body {
+    background: linear-gradient(to right, #ed8677, #fbba7a)
+}
 .node-add-btn {
     display: none;
     border-radius: 50%;
@@ -76,7 +79,7 @@ svg {
     top: -500px;
 }
 line {
-    stroke: #d9d9d9;
+    stroke: cornflowerblue;
     stroke-width: 1;
 }
 .ant-btn {

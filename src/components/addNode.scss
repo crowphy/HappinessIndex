@@ -2,7 +2,9 @@
     
 }
 body {
-    background: linear-gradient(to right, #ed8677, #fbba7a)
+    background: radial-gradient(#ed8677, #fbba7a);
+    height: 2000px;
+    width: 2000px;
 }
 .node-add-btn {
     display: none;

@@ -7,7 +7,8 @@ import infoTree from './infoTree';
 const FormItem = Form.Item;
 let uid = 0;
 let nodeGap = 30;
-
+document.querySelector('body').style.backgroundColor='#000'
+document.querySelector('body').style.top = 2000;
 /**
  * 
  * 
@@ -313,7 +314,7 @@ class AddNode extends Component {
     return (
       <Form className='node-add'>
         
-        <FormItem className='node-item' style={{ top: 300, left: 84 }}>
+        <FormItem className='node-item' style={{ top: 1000, left: 84 }}>
           <div>
             <div className="node-input-area node-root">
               <Input className="node-input" placeholder="名称" />

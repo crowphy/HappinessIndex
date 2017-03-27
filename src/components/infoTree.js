@@ -3,7 +3,7 @@ export default {
         id: 0,
         parentId: null,
         position: {
-        top: 300,
+        top: 1000,
         left: 50
         },
         sonNum: 0,

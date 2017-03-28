@@ -8,6 +8,18 @@
         <img style="width: 0; height: 0" src="https://crowphy.github.io/TargetIndex/images/bird.jpg">
         <a href="kaola://www.kaola.com">打开APP</a>
         <div id="root"></div>
+        <a href="下载地址">下载或打开 app</a>
+<script>
+$('a').click(function() {
+    var ifr = document.createElement('iframe');
+    ifr.src = 'kaola://www.kaola.com';
+    ifr.style.display = 'none';
+    document.body.appendChild(ifr);
+    setTimeout(function(){
+        document.body.removeChild(ifr);
+    }, 3000);
+});
+</script>
         <script type="text/javascript" src="vendor.js" charset="utf-8"></script>
         <script type="text/javascript" src="main.js" charset="utf-8"></script>
 </html>
